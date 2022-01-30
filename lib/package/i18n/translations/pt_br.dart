@@ -1,4 +1,4 @@
-import 'package:flutter_easy_tools/package/helpers/language/all_exports.dart';
+import '../basic_translator.dart';
 
 class PtBrBasicTranslator implements IBasicTranslator {
   @override
