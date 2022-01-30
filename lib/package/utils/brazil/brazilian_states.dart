@@ -1,4 +1,4 @@
-import 'package:flutter_easy_tools/flutter_package.dart';
+import 'package:flutter_easy_tools/flutter_easy_tools.dart';
 
 abstract class Brazil {
   static const List<_BrazilianStateUf> _states = [
