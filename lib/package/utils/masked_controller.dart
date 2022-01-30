@@ -1,5 +1,5 @@
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_easy_tools/flutter_package.dart';
+import 'package:flutter_easy_tools/flutter_easy_tools.dart';
 
 class MaskedController extends TextEditingController {
   String? mask;
