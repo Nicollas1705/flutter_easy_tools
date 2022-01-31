@@ -1,6 +1,8 @@
 import 'package:flutter_easy_tools/flutter_easy_tools.dart';
 
-abstract class BrazilianMasks {
+class BrazilianMasks {
+  BrazilianMasks._();
+
   static const Map<String, String> filters = Format.filterMask;
 
   static const String cpf = "000.000.000-00";

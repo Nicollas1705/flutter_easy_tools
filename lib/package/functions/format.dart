@@ -1,4 +1,6 @@
-abstract class Format {
+class Format {
+  Format._();
+
   static const Map<String, String> filterMask = {
     "0": r'[0-9]',
     "A": r'[A-Z]',

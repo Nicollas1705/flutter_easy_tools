@@ -1,6 +1,8 @@
 import 'package:flutter_easy_tools/flutter_easy_tools.dart';
 
-abstract class Brazil {
+class Brazil {
+  Brazil._();
+
   static const List<_BrazilianStateUf> _states = [
     _BrazilianStateUf("Acre", "AC"),
     _BrazilianStateUf("Alagoas", "AL"),

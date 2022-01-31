@@ -1,8 +1,8 @@
-
-
 import 'package:flutter_easy_tools/flutter_easy_tools.dart';
 
-abstract class Validate {
+class Validate {
+  Validate._();
+
   static const int minLengthName = 5;
 
   static bool _validateCpf(String? cpf) {
