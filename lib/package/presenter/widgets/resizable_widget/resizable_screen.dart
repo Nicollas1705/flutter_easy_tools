@@ -8,7 +8,7 @@ class ResizableScreen {
   final bool fixedSizeWhenResizingWindow;
   final Widget Function() screenBuilder;
 
-  /// Use it to navigate: key.currentContext
+  /// Use it to navigate: [key.currentContext]
   final GlobalKey<NavigatorState> key;
 
   /// Defines the initial value to the screen size
