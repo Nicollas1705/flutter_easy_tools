@@ -6,23 +6,25 @@ class ResizableController extends ChangeNotifier {
   /// Enable/disable the resizable widget
   final bool isResizable;
 
-  /// Compare to the screen size to define if it is single or multi screen
+  /// Compare to the screen size to define if it is single or multi screen.
+  /// 
+  /// If the max available size is < [sizeSeparator], it will show only the screen1.
+  /// If the max available size is >= [sizeSeparator], it will show both screens.
   final double sizeSeparator;
   final Axis splitDirection;
   ResizableController({
     this.isResizable = true,
     this.sizeSeparator = 800,
     this.splitDirection = Axis.horizontal,
-  }) : _isHorizontal = splitDirection == Axis.horizontal;
-
-  final bool _isHorizontal;
+  });
   late double _maxWindowSize;
 
-  /// The maximum size available
+  /// The maximum widget size
   double get maxWindowSize => _maxWindowSize;
   double get resizableBarThickness => 10;
+  bool get _isHorizontal => splitDirection == Axis.horizontal;
 
-  /// The maximum size available for both screens (size - resizableBarThickness)
+  /// The maximum available size for both screens (size - resizableBarThickness)
   double get maxSize => _maxSize;
   late double _maxSize;
   void _setMaxSize(BoxConstraints constraints) {
@@ -139,6 +141,7 @@ class ResizableController extends ChangeNotifier {
   bool get isResizing => _isResizing;
   bool _isResizing = false;
   set isResizing(bool value) {
+    if (_isResizing == value) return;
     _isResizing = value;
     notifyListeners();
   }
@@ -147,6 +150,7 @@ class ResizableController extends ChangeNotifier {
   bool get isShowingBothScreens => _isShowingBothScreens;
   bool _isShowingBothScreens = true;
   set _setIsShowingBothScreens(bool value) {
+    if (_isShowingBothScreens == value) return;
     if (value) {
       if (maxWindowSize >= sizeSeparator) _isShowingBothScreens = value;
     } else {
@@ -159,6 +163,7 @@ class ResizableController extends ChangeNotifier {
 
   /// Can show/hide screen2 if it has enough space (you can change)
   set showScreen2(bool value) {
+    if (_showScreen2 == value) return;
     _showScreen2 = value;
     _firstExec = true;
     notifyListeners();
