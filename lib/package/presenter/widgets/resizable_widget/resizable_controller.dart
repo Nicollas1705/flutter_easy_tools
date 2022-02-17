@@ -54,15 +54,9 @@ class ResizableController extends ChangeNotifier {
     if (maxWindowSize >= sizeSeparator &&
         maxWindowSize >=
             resizableBarThickness + screen1.minSize + screen2.minSize) {
-      if (!isShowingBothScreens) {
-        _setIsShowingBothScreens = true;
-        _maxSize -= resizableBarThickness;
-      }
+      _setIsShowingBothScreens = true;
     } else {
-      if (isShowingBothScreens) {
-        _setIsShowingBothScreens = false;
-        _maxSize += resizableBarThickness;
-      }
+      _setIsShowingBothScreens = false;
     }
 
     if (isShowingBothScreens && showScreen2) {
@@ -73,14 +67,7 @@ class ResizableController extends ChangeNotifier {
         tempSize2 = (1 - screen1.initialPercentSize) * maxSize;
       }
 
-      if (tempSize1 < screen1.minSize && tempSize2 < screen2.minSize) {
-        // throw "Invalid Size";
-        _setIsShowingBothScreens = false;
-        // screen1.size = maxSize;
-        // screen1.percentSize = 1;
-        // screen2.size = 0;
-        // screen2.percentSize = 0;
-      } else if (tempSize1 < screen1.minSize) {
+      if (tempSize1 < screen1.minSize) {
         screen1.size = screen1.minSize;
         screen2.size = maxSize - screen1.size;
       } else if (tempSize2 < screen2.minSize) {
@@ -152,8 +139,10 @@ class ResizableController extends ChangeNotifier {
   set _setIsShowingBothScreens(bool value) {
     if (_isShowingBothScreens == value) return;
     if (value) {
+      _maxSize -= resizableBarThickness;
       if (maxWindowSize >= sizeSeparator) _isShowingBothScreens = value;
     } else {
+      _maxSize += resizableBarThickness;
       _isShowingBothScreens = value;
     }
   }
