@@ -10,15 +10,13 @@ class ResizableWidget extends StatelessWidget {
   final ResizableScreen screen1;
   final ResizableScreen screen2;
 
-  /// By default, the color is Theme.of(context).scaffoldBackgroundColor
-  final Color? resizableBarBackgroundColor;
-
   /// By default, the color is Theme.of(context).textTheme.headline1.color
   final Color? resizableIconColor;
+  final Color? resizableBarBackgroundColor;
+  final Decoration? resizableBarDecoration;
 
-  // TODO:
-  // final double resizableBarShadow;
-  // Mobile: Resize only on long press
+  /// If used in mobile, set as true
+  final bool dragOnLongPress;
 
   const ResizableWidget({
     Key? key,
@@ -27,6 +25,8 @@ class ResizableWidget extends StatelessWidget {
     required this.screen2,
     this.resizableBarBackgroundColor,
     this.resizableIconColor,
+    this.resizableBarDecoration,
+    this.dragOnLongPress = false,
   }) : super(key: key);
 
   @override
@@ -36,6 +36,7 @@ class ResizableWidget extends StatelessWidget {
           !screen2.fixedSizeWhenResizingWindow,
       "Only one screen can have 'fixedSizeWhenResizingWindow' = true",
     );
+
     return AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
@@ -46,26 +47,36 @@ class ResizableWidget extends StatelessWidget {
             screen2: screen2,
           );
 
-          return isHorizontal
-              ? Row(children: _children(context))
-              : Column(children: _children(context));
+          return Stack(
+            children: [
+              _isHorizontal
+                  ? Row(children: _children())
+                  : Column(children: _children()),
+              _resizableBar(context, constraints),
+            ],
+          );
         });
       },
     );
   }
 
-  List<Widget> _children(BuildContext context) {
+  List<Widget> _children() {
     return [
       _singleScreen(screen1),
-      _resizableBar(context),
+      _isShowingBoth
+          ? SizedBox(
+              width: _isHorizontal ? controller.resizableBarThickness : null,
+              height: _isHorizontal ? null : controller.resizableBarThickness,
+            )
+          : const SizedBox(),
       _singleScreen(screen2),
     ];
   }
 
   Widget _singleScreen(ResizableScreen screen) {
     return SizedBox(
-      width: isHorizontal ? screen.size : null,
-      height: isHorizontal ? null : screen.size,
+      width: _isHorizontal ? screen.size : null,
+      height: _isHorizontal ? null : screen.size,
       child: Navigator(
         key: screen.key,
         onGenerateRoute: (routeSettings) {
@@ -79,40 +90,24 @@ class ResizableWidget extends StatelessWidget {
     );
   }
 
-  Widget _resizableBar(BuildContext context) {
-    return controller.isResizable &&
-            controller.isShowingBothScreens &&
-            controller.showScreen2
-        ? MouseRegion(
-            cursor: controller.isResizing
-                ? resizableCursorStyle
-                : MouseCursor.defer,
+  Widget _resizableBar(
+    BuildContext context,
+    BoxConstraints constraints,
+  ) {
+    return _isShowingBoth
+        ? Positioned(
+            left: _isHorizontal ? screen1.size : null,
+            top: _isHorizontal ? null : screen1.size,
             child: Container(
-              color: resizableBarBackgroundColor ??
-                  Theme.of(context).scaffoldBackgroundColor,
-              child: isHorizontal
-                  ? Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _resizableButton(context),
-                          ],
-                        ),
-                      ],
-                    )
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _resizableButton(context),
-                          ],
-                        ),
-                      ],
-                    ),
+              decoration: resizableBarDecoration ??
+                  BoxDecoration(color: resizableBarBackgroundColor),
+              width: _isHorizontal
+                  ? controller.resizableBarThickness
+                  : constraints.maxWidth,
+              height: _isHorizontal
+                  ? constraints.maxHeight
+                  : controller.resizableBarThickness,
+              child: Center(child: _resizableButton(context)),
             ),
           )
         : const SizedBox();
@@ -120,31 +115,41 @@ class ResizableWidget extends StatelessWidget {
 
   Widget _resizableButton(BuildContext context) {
     return MouseRegion(
-      cursor: resizableCursorStyle,
-      child: Draggable(
-        child: _resizableIcon(context),
-        feedback: const SizedBox(),
-        onDragUpdate: (dragUpdateDetails) {
-          controller.onDragUpdate(
-            drag: dragUpdateDetails,
-            screen1: screen1,
-            screen2: screen2,
-          );
-        },
-        onDragStarted: () {
-          controller.isResizing = true;
-        },
-        onDragEnd: (_) {
-          controller.isResizing = false;
-        },
-      ),
+      cursor: _resizableCursorStyle,
+      child: dragOnLongPress
+          ? LongPressDraggable(
+              child: _resizableIcon(context),
+              feedback: const SizedBox(),
+              onDragUpdate: (dragUpdateDetails) {
+                controller.onDragUpdate(
+                  drag: dragUpdateDetails,
+                  screen1: screen1,
+                  screen2: screen2,
+                );
+              },
+              onDragStarted: () => controller.isResizing = true,
+              onDragEnd: (_) => controller.isResizing = false,
+            )
+          : Draggable(
+              child: _resizableIcon(context),
+              feedback: const SizedBox(),
+              onDragUpdate: (dragUpdateDetails) {
+                controller.onDragUpdate(
+                  drag: dragUpdateDetails,
+                  screen1: screen1,
+                  screen2: screen2,
+                );
+              },
+              onDragStarted: () => controller.isResizing = true,
+              onDragEnd: (_) => controller.isResizing = false,
+            ),
     );
   }
 
   Widget _resizableIcon(BuildContext context) {
     Widget verticalBar = Container(
-      width: isHorizontal ? 2 : null,
-      height: isHorizontal ? null : 2,
+      width: _isHorizontal ? 2 : null,
+      height: _isHorizontal ? null : 2,
       color: resizableIconColor ??
           Theme.of(context).textTheme.headline1?.color ??
           Colors.black,
@@ -153,9 +158,9 @@ class ResizableWidget extends StatelessWidget {
     return Container(
       color: Colors.transparent,
       padding: const EdgeInsets.all(2),
-      width: isHorizontal ? controller.resizableBarThickness : 20,
-      height: isHorizontal ? 20 : controller.resizableBarThickness,
-      child: isHorizontal
+      width: _isHorizontal ? controller.resizableBarThickness : 20,
+      height: _isHorizontal ? 20 : controller.resizableBarThickness,
+      child: _isHorizontal
           ? Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -173,9 +178,14 @@ class ResizableWidget extends StatelessWidget {
     );
   }
 
-  bool get isHorizontal => controller.splitDirection == Axis.horizontal;
+  bool get _isHorizontal => controller.splitDirection == Axis.horizontal;
 
-  SystemMouseCursor get resizableCursorStyle => isHorizontal
+  SystemMouseCursor get _resizableCursorStyle => _isHorizontal
       ? SystemMouseCursors.resizeColumn
       : SystemMouseCursors.resizeRow;
+
+  bool get _isShowingBoth =>
+      controller.isResizable &&
+      controller.isShowingBothScreens &&
+      controller.showScreen2;
 }
