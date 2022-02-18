@@ -10,12 +10,12 @@ class ResizableWidget extends StatelessWidget {
   final ResizableScreen screen1;
   final ResizableScreen screen2;
 
-  /// By default, the color is Theme.of(context).textTheme.headline1.color
+  /// The color of the 2 bars icon
   final Color? resizableIconColor;
   final Color? resizableBarBackgroundColor;
   final Decoration? resizableBarDecoration;
 
-  /// If used in mobile, set as true
+  /// Set as true to use a long press to resize (ex: mobile)
   final bool dragOnLongPress;
 
   const ResizableWidget({
@@ -24,7 +24,7 @@ class ResizableWidget extends StatelessWidget {
     required this.screen1,
     required this.screen2,
     this.resizableBarBackgroundColor,
-    this.resizableIconColor,
+    this.resizableIconColor = Colors.black,
     this.resizableBarDecoration,
     this.dragOnLongPress = false,
   }) : super(key: key);
@@ -150,9 +150,7 @@ class ResizableWidget extends StatelessWidget {
     Widget verticalBar = Container(
       width: _isHorizontal ? 2 : null,
       height: _isHorizontal ? null : 2,
-      color: resizableIconColor ??
-          Theme.of(context).textTheme.headline1?.color ??
-          Colors.black,
+      color: resizableIconColor,
     );
 
     return Container(
