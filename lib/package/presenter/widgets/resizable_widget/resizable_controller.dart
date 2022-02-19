@@ -75,7 +75,6 @@ class ResizableController extends ChangeNotifier {
         screen1.size = maxSize - screen2.size;
       } else {
         if (_firstExec) {
-          _firstExec = false;
           screen1.size = tempSize1;
           screen2.size = tempSize2;
         } else {
@@ -97,6 +96,8 @@ class ResizableController extends ChangeNotifier {
       screen2.size = 0;
       screen2.percentSize = 0;
     }
+
+    if (_firstExec) _firstExec = false;
   }
 
   void onDragUpdate({
