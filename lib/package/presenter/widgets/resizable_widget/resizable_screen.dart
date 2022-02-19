@@ -11,14 +11,17 @@ class ResizableScreen {
   /// Use it to navigate: [key.currentContext]
   final GlobalKey<NavigatorState> key;
 
-  /// Defines the initial value to the screen size
-  // final double? beginningSize;
+  /// The initial value for the screen size.
+  /// 
+  /// It works on only one screen at a time.
+  final double? beginningSize;
 
   ResizableScreen({
     required this.screenBuilder,
     this.minSize = 100,
     this.percentSize = 0.3,
     this.fixedSizeWhenResizingWindow = false,
+    this.beginningSize,
   })  : key = GlobalKey<NavigatorState>(),
         _initialPercentSize = percentSize;
 

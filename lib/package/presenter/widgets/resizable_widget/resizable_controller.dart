@@ -63,8 +63,16 @@ class ResizableController extends ChangeNotifier {
       double tempSize1 = screen1.percentSize * maxSize;
       double tempSize2 = (1 - screen1.percentSize) * maxSize;
       if (_firstExec) {
-        tempSize1 = screen1.initialPercentSize * maxSize;
-        tempSize2 = (1 - screen1.initialPercentSize) * maxSize;
+        if (screen1.beginningSize != null) {
+          tempSize1 = screen1.beginningSize!;
+          tempSize2 = maxSize - tempSize1;
+        } else if (screen2.beginningSize != null) {
+          tempSize2 = screen2.beginningSize!;
+          tempSize1 = maxSize - tempSize2;
+        } else {
+          tempSize1 = screen1.initialPercentSize * maxSize;
+          tempSize2 = maxSize - tempSize1;
+        }
       }
 
       if (tempSize1 < screen1.minSize) {
