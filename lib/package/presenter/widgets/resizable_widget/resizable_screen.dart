@@ -2,13 +2,21 @@ import 'package:flutter/material.dart';
 
 class ResizableScreen {
   late double size;
+
+  /// The percent size of the widget used on this screen.
+  /// 
+  /// The main widget will only use the screen1 [percentSize].
   double percentSize;
 
   final double minSize;
+
+  /// Fix only one screen at a time. Can not be used in both.
   final bool fixedSizeWhenResizingWindow;
   final Widget Function() screenBuilder;
 
-  /// Use it to navigate: [key.currentContext]
+  /// Use it to navigate: [key.currentContext].
+  /// 
+  /// Ex: Navigator.push(key.currentContext, ...);
   final GlobalKey<NavigatorState> key;
 
   /// The initial value for the screen size.
@@ -37,7 +45,7 @@ class ResizableScreen {
     }
   }
 
-  /// Back to initial page
+  /// Back to initial page.
   void popAll() {
     if (key.currentState != null && key.currentContext != null) {
       while (key.currentState!.canPop()) {

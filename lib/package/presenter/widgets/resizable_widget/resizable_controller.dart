@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'resizable_screen.dart';
 
 class ResizableController extends ChangeNotifier {
-  /// Enable/disable the resizable widget
+  /// Enable/disable the resizable widget.
   final bool isResizable;
 
   /// Compare to the screen size to define if it is single or multi screen.
@@ -19,12 +19,12 @@ class ResizableController extends ChangeNotifier {
   });
   late double _maxWindowSize;
 
-  /// The maximum widget size
+  /// The maximum widget size.
   double get maxWindowSize => _maxWindowSize;
   double get resizableBarThickness => 10;
   bool get _isHorizontal => splitDirection == Axis.horizontal;
 
-  /// The maximum available size for both screens (size - resizableBarThickness)
+  /// The maximum available size for both screens (size - resizableBarThickness).
   double get maxSize => _maxSize;
   late double _maxSize;
   void _setMaxSize(BoxConstraints constraints) {
@@ -133,7 +133,7 @@ class ResizableController extends ChangeNotifier {
     }
   }
 
-  /// While resizing the screens (not the whole window)
+  /// While resizing the screens (not the whole window).
   bool get isResizing => _isResizing;
   bool _isResizing = false;
   set isResizing(bool value) {
@@ -142,7 +142,7 @@ class ResizableController extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Check if both screens are being shown
+  /// Check if both screens are being shown.
   bool get isShowingBothScreens => _isShowingBothScreens;
   bool _isShowingBothScreens = true;
   set _setIsShowingBothScreens(bool value) {
@@ -159,7 +159,7 @@ class ResizableController extends ChangeNotifier {
   bool get showScreen2 => _showScreen2;
   bool _showScreen2 = true;
 
-  /// Can show/hide screen2 if it has enough space (you can change)
+  /// Can show/hide screen2 if it has enough space (you can change).
   set showScreen2(bool value) {
     if (_showScreen2 == value) return;
     _showScreen2 = value;

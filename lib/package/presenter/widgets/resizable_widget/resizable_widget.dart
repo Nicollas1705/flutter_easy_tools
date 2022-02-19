@@ -10,12 +10,12 @@ class ResizableWidget extends StatelessWidget {
   final ResizableScreen screen1;
   final ResizableScreen screen2;
 
-  /// The color of the 2 bars icon
+  /// The color of the 2 bars icon.
   final Color? resizableIconColor;
   final Color? resizableBarBackgroundColor;
   final Decoration? resizableBarDecoration;
 
-  /// Set as true to use a long press to resize (ex: mobile)
+  /// Set as true to use a long press to resize (ex: mobile).
   final bool dragOnLongPress;
 
   const ResizableWidget({
