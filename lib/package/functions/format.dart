@@ -1,3 +1,5 @@
+part of flutter_easy_tools;
+
 class Format {
   Format._();
 

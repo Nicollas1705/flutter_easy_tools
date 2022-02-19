@@ -1,6 +1,4 @@
-import 'dart:async';
-
-import 'package:flutter/material.dart';
+part of flutter_easy_tools;
 
 class FN {
   FN._();

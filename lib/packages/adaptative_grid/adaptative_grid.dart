@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+part of adaptative_grid;
 
 class AdaptativeGrid extends StatelessWidget {
   final List<Widget>? children;

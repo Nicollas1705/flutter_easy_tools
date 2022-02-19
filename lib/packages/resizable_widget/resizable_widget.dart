@@ -1,8 +1,4 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-
-import 'resizable_screen.dart';
-import 'resizable_controller.dart';
+part of resizable_widget;
 
 class ResizableWidget extends StatelessWidget {
   final ResizableController controller;

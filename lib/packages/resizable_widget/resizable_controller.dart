@@ -1,6 +1,4 @@
-import 'package:flutter/material.dart';
-
-import 'resizable_screen.dart';
+part of resizable_widget;
 
 class ResizableController extends ChangeNotifier {
   /// Enable/disable the resizable widget.
