@@ -62,7 +62,7 @@ class TextMaskingController extends TextEditingController {
   /// | "a" | Lower case letters
   /// | "@" | Any case letters
   /// | "#" | Any case letters and numbers
-  static Map<String, String> get defaultFilters => {
+  static const Map<String, String> defaultFilters = {
         "0": r'[0-9]',
         "A": r'[A-Z]',
         "a": r'[a-z]',
