@@ -66,7 +66,7 @@ class TextMaskingController extends TextEditingController {
         "0": r'[0-9]',
         "A": r'[A-Z]',
         "a": r'[a-z]',
-        "@": r'[A-Za-z]',
+        "@": r'[a-zA-Z]',
         "#": r'[a-zA-Z0-9]',
       };
 
