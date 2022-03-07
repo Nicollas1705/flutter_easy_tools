@@ -30,7 +30,7 @@ class TextMaskingController extends TextEditingController {
   /// 
   /// Note: if set as true, the user will need to delete each character from mask one by one.
   /// 
-  /// Example (mask: "00--00"): "12--3|" >> delete >> "12--|" (not "12|").
+  /// Example (mask: "00--00"): "12--3|" >> backspace >> "12--|" (not "12|").
   /// Pipe character ("|") representing the user cursor.
   final bool thereAreRegexMatchInMask;
   
@@ -188,7 +188,7 @@ class TextMaskingController extends TextEditingController {
         if (newPosition > acpOldMask.length - 1) {
           newPosition = acpOldMask.length - 1;
         }
-        // Case (mask: "00--00"): "12--|3" >> delete >> "12|--3" (instead of "12-|-3")
+        // Case (mask: "00--00"): "12--|3" >> backspace >> "12|--3" (instead of "12-|-3")
         if (!acpOldMask[newPosition]) {
           for (var i = newPosition; i >= 0; i--) {
             if (acpOldMask[i]) {
@@ -248,7 +248,7 @@ class TextMaskingController extends TextEditingController {
     int? maxCursorPositionByMask;
 
     if (acpMask.isNotEmpty) {
-      // Case (mask: "--00"): "--|12" >> delete >> "--|12" (instead of "-|-12")
+      // Case (mask: "--00"): "--|12" >> backspace >> "--|12" (instead of "-|-12")
       minCursorPosition = acpMask.indexWhere((element) => element);
 
       // Case (mask: "--00--"): "--12|--" >> add number >> "--12|--" (instead of "--12-|-")
@@ -411,7 +411,7 @@ class TextMaskingController extends TextEditingController {
       }
     }
 
-    // Case (mask: "00--00"): "12--3|" >> delete >> "12|" (not "12--|")
+    // Case (mask: "00--00"): "12--3|" >> backspace >> "12|" (not "12--|")
     if (!thereAreRegexMatchInMask) {
       String filterKeys = filters.keys.join();
       final maskChars = mask.replaceAll(RegExp("[$filterKeys]"), "");
