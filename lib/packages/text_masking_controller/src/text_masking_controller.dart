@@ -399,10 +399,9 @@ class TextMaskingController extends TextEditingController {
     if (restMask.isNotEmpty) {
       String addResult = "";
       bool containsFilterKey = false;
-      final splRestMask = restMask.split("");
-      for (var i = 0; i < splRestMask.length; i++) {
-        if (!filterKeys.contains(splRestMask[i])) {
-          addResult += splRestMask[i];
+      for (var i = 0; i < restMask.length; i++) {
+        if (!filterKeys.contains(restMask[i])) {
+          addResult += restMask[i];
         } else {
           containsFilterKey = true;
           break;
