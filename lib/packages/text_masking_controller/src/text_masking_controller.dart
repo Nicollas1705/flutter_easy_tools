@@ -7,23 +7,43 @@ enum MaskAutoComplete {
 
 class TextMaskingController extends TextEditingController {
   List<String> _masks = [];
+  
+  /// The [filters] can be changed to include costumized masks {'FILTER': 'REGEX_PATTERN'}.
   final Map<String, String> filters;
+
+  /// If [cursorToEndWhenUpdate] is true, the cursor will be send to end of the text when types.
   final bool cursorToEndWhenUpdate;
-  late MaskAutoComplete maskAutoComplete;
+
+  /// This parameter is for a specific case.
+  /// 
+  /// If some mask has a character that can be included in its regex (not recommended):
+  /// 
+  /// Example: mask: "99 000" => The "9" can match with the regex "0" (default as numbers).
+  /// 
+  /// In this case, the user will not be able type the number "9", 
+  /// because it will be canceled by the "9" character of the mask.
+  /// 
+  /// Example 2: mask: "00-*" => the "-" can match with the regex "*" (default as any character).
+  /// But as the "0" is a filter key (by default), it can be typed normally by the user.
+  /// 
+  /// To avoid this specific scenario, just set [thereAreRegexMatchInMask] as true.
+  /// 
+  /// Note: if set as true, the user will need to delete each character from mask one by one.
+  /// 
+  /// Example (mask: "00--00"): "12--3|" >> delete >> "12--|" (not "12|").
+  /// Pipe character ("|") representing the user cursor.
+  final bool thereAreRegexMatchInMask;
+  
+  /// The [maskAutoComplete] is to set the way to complete the mask, for example:
+  /// * lazy: (mask "00--00") >> text: "1" >> when add a number (2) >> "12" (not completed);
+  /// * quick:  (mask "00--00") >> text: "1" >> when add a number (2) >> "12--" (completed).
+  final MaskAutoComplete maskAutoComplete;
 
   /// A [TextEditingController] input with costumized [mask] (or [masks]).
   ///
   /// Can be used a single [mask] or multiple [masks].
   ///
   /// If using multiple [masks], it will automatically update according to the text size.
-  ///
-  /// The [filters] can be changed to include costumized masks {'FILTER': 'REGEX_PATTERN'}.
-  ///
-  /// If [cursorToEndWhenUpdate] is true, the cursor will be send to end of the text when types.
-  ///
-  /// The [maskAutoComplete] is to set the way to complete the mask, for example:
-  /// * lazy: (mask "00--00") >> text: "1" >> when add a number (2) >> "12" (not completed);
-  /// * quick:  (mask "00--00") >> text: "1" >> when add a number (2) >> "12--" (completed).
   ///
   /// #### Default [filters] values:
   /// | Key character     | Description                  | Regex pattern
@@ -48,6 +68,7 @@ class TextMaskingController extends TextEditingController {
     },
     this.cursorToEndWhenUpdate = false,
     this.maskAutoComplete = MaskAutoComplete.lazy,
+    this.thereAreRegexMatchInMask = false,
   }) {
     updateMask(mask: mask, masks: masks);
     _oldText = initialText ?? _oldText;
@@ -367,44 +388,52 @@ class TextMaskingController extends TextEditingController {
     return currentMask;
   }
 
-  String _masking(String from, {String? mask}) {
+  String _masking(String text, {String? mask}) {
+    mask ??= _currentMask(text);
+    if (mask == null || mask.isEmpty) return text;
     String result = "";
-    int fromIndex = 0;
-    String? currentMask = mask ?? _currentMask(from);
-    if (currentMask == null) return from;
-    if (currentMask.isEmpty) return "";
+    int textIndex = 0;
 
-    for (int i = 0; i < currentMask.length; i++) {
-      if (fromIndex >= from.length) break;
-      if (filters.containsKey(currentMask[i])) {
-        final RegExp r = RegExp(filters[currentMask[i]]!);
-        if (r.hasMatch(from[fromIndex])) {
-          result += from[fromIndex];
+    // Apply the mask
+    for (int maskIndex = 0; maskIndex < mask.length; maskIndex++) {
+      if (textIndex >= text.length) break;
+      if (filters.containsKey(mask[maskIndex])) {
+        final RegExp regex = RegExp(filters[mask[maskIndex]]!);
+        if (regex.hasMatch(text[textIndex])) {
+          result += text[textIndex];
         } else {
-          i--;
+          maskIndex--;
         }
-        fromIndex++;
+        textIndex++;
       } else {
-        result += currentMask[i];
+        result += mask[maskIndex];
+        if (text[textIndex] == mask[maskIndex]) textIndex++;
       }
     }
 
-    String filterKeys = filters.keys.join();
-    final maskChars = currentMask.replaceAll(RegExp("[$filterKeys]"), "");
-    for (int i = result.length - 1; i >= 0; i--) {
-      if (maskChars.contains(result.substring(result.length - 1))) {
-        result = result.substring(0, result.length - 1);
-      } else {
-        break;
+    // Case (mask: "00--00"): "12--3|" >> delete >> "12|" (not "12--|")
+    if (!thereAreRegexMatchInMask) {
+      String filterKeys = filters.keys.join();
+      final maskChars = mask.replaceAll(RegExp("[$filterKeys]"), "");
+      // Remove the rest of the mask
+      // Example: _masking("12 ", mask: "00--0") => "12" (not "12-")
+      for (int i = result.length - 1; i >= 0; i--) {
+        if (maskChars.contains(result.substring(result.length - 1))) {
+          result = result.substring(0, result.length - 1);
+        } else {
+          break;
+        }
       }
     }
 
-    final restMask = currentMask.substring(result.length);
+    final restMask = mask.substring(result.length);
+    // Add the end of the mask
+    // Example: _masking("12", mask: "<00>") => "<12>" (not "<12")
     if (restMask.isNotEmpty) {
       String addResult = "";
       bool containsFilterKey = false;
       for (var i = 0; i < restMask.length; i++) {
-        if (!filterKeys.contains(restMask[i])) {
+        if (!filters.containsKey(restMask[i])) {
           addResult += restMask[i];
         } else {
           containsFilterKey = true;
