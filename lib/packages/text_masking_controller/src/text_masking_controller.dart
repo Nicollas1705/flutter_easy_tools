@@ -33,6 +33,7 @@ class TextMaskingController extends TextEditingController {
   /// | "a"               | Lower case letters           | [a-z]
   /// | "@"               | Any case letters             | [a-zA-Z]
   /// | "#"               | Any case letters and numbers | [a-zA-Z0-9]
+  /// | "*"               | Any character                | .*
   TextMaskingController({
     String? initialText,
     String? mask,
@@ -43,6 +44,7 @@ class TextMaskingController extends TextEditingController {
       "a": r'[a-z]',
       "@": r'[a-zA-Z]',
       "#": r'[a-zA-Z0-9]',
+      "*": r'.*',
     },
     this.cursorToEndWhenUpdate = false,
     this.maskAutoComplete = MaskAutoComplete.lazy,
@@ -62,12 +64,14 @@ class TextMaskingController extends TextEditingController {
   /// | "a" | Lower case letters
   /// | "@" | Any case letters
   /// | "#" | Any case letters and numbers
+  /// | "*" | Any character
   static const Map<String, String> defaultFilters = {
         "0": r'[0-9]',
         "A": r'[A-Z]',
         "a": r'[a-z]',
         "@": r'[a-zA-Z]',
         "#": r'[a-zA-Z0-9]',
+        "*": r'.*',
       };
 
   /// Ignore this.
